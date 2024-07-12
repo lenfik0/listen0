@@ -1,0 +1,212 @@
+{%extends 'base.html'%}
+{%load static%}
+{%block title%}3DNams - Самые лучшие 3D модели в Латвии!{%endblock title%}
+{%block content%}
+<div class="main">
+
+    <div class="bg">
+        <h1 class="heading">3DNams</h1>
+        <p class="text1">Самые лучшие 3D модели в Латвии! {%for comment in comments%} {{comment.review}} {%endfor%}</p>
+
+        <div id="shop" class="choice-menu filter-button-group">
+
+            <div onclick="" class="choice-item active filter-button" data-filter="filter">
+                <a href="#"> <i class="fas fa-tags mr-2"> </i> Все товары</a>
+            </div>
+            <div onclick="" class="choice-item filter-button" data-filter="Головоломки">
+                <a href="#"> <i class="fas fa-tags mr-2"> </i> Головоломки</a>
+            </div>
+            <div onclick="" class="choice-item filter-button" data-filter="Статуэтки">
+                <a href="#"> <i class="fas fa-tags mr-2"> </i> Статуэтки</a>
+            </div>
+            <div onclick="" class="choice-item filter-button" data-filter="Другое">
+                <a href="#"> <i class="fas fa-tags mr-2"> </i> Другое</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="main-content filter-items">
+        {%for tovar in tovari%}
+        <div data-id="{{tovar.id}}" class="card filter {{tovar.category}}" onclick="addtocart(this,{{tovar.id}},false)">
+            <img class="card-image" width="" src="/media/{{tovar.image}}" alt="">
+            <a href="{{tovar.get_absolute_url}}">
+                <p class="card-title">{{tovar.title}}</p>
+            </a>
+            <p class="rating">
+                {%for i in numbers%}
+                {%if tovar.rating >= i%}
+                ★
+                {%else%}
+                ☆
+                {%endif%}
+                {%endfor%}
+            </p>
+            <p class="pricecart"><b>€ {{tovar.price}}</b></p>
+        </div>
+        {%endfor%}
+    </div>
+    <div class="korzina">
+        <a class="korz" onclick="card()"><i class="fa-solid fa-basket-shopping"></i></a>
+    </div>
+</div>
+<div class="success hidden" id="success">
+    <img src="{%static 'img/галочка.png'%}" class="galochka" alt="">
+    <h1>Успешная покупка!</h1>
+    <p class="sc">Спасибо за покупку! <br> В скором времени ожидайте письма на почту для оплаты товара!</p>
+</div>
+<div class="menuk hidden fade" id="ex1">
+    <div class="corz" id="menuk">
+        <div class="left">
+            <h2>Корзина</h2>
+            <div class="products">
+                <!-- <div class="nope">
+                        <i class="fas fa-cogs text-light fa-3x cogs"></i>
+                        <p class="text-muted text-small mb-0 mt-2">КОРЗИНА</p>
+                    </div> -->
+
+            </div>
+        </div>
+        <div class="right">
+            <div class="price">
+
+                <span class="pice" style="float:right;">€ 0.00</span>
+                <span class="pric" style="float:right;">Итого:</span>
+            </div>
+            <div class="helps">
+                <p class="helpt">
+                    Внимание! После оплаты товара нужно ожидать письма на почту. Если вам не пришло письмо, то
+                    напишите на почту help@3dnams.com
+                </p>
+            </div>
+            <form action="/buy">
+                <p class="fors">Для покупки заполните форму ниже.</p>
+                <div class="inp">
+                    <div class="inputrow">
+
+                        <i class="fas fa-user user"></i>
+                        <input name="name" type="text" placeholder="Имя Фамилия">
+                        <i class></i>
+                    </div>
+                    <div class="inputrow">
+                        <i class="fas fa-at emal"></i>
+                        <input name="email" type="email" placeholder="Ваш Email">
+                        <i class></i>
+                    </div>
+                    <div class="inputrow">
+                        <i class="fas fa-code promo"></i>
+                        <input class="promo" name="promo" type="text" placeholder="Промокод, если есть!">
+                        <i class></i>
+                    </div>
+                    <div class="form-group col-12">
+                        <div class="form-check mb-3 forms">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="accept" value="1" checked="">
+                                <span class="form-check-sign">Я принимаю условия </span>
+                                <a href="https://legal.easyx.ru/general/rules" target="_blank"
+                                    class="text-warning">пользовательского соглашения</a>
+                                <span class="form-check-sign">и</span>
+                                <a href="https://legal.easyx.ru/easydonate/terms-of-service" target="_blank"
+                                    class="text-warning">оказания услуг</a>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <a onclick="buy()" class="buy">
+                    Купить
+                </a>
+                <a class="back" href="" rel="modal:close">
+                    Отмена
+                </a>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+<script>
+    var isotope = new Isotope('.filter-items');
+    document.querySelectorAll('.filter-button').forEach(function (filterButton) {
+        filterButton.onclick = function () {
+            var filterValue = this.dataset.filter;
+            console.log(filterValue)
+            isotope.arrange({ filter: "." + filterValue });
+            document.querySelectorAll('.filter-button-group > div').forEach(function (filterButton) {
+                filterButton.classList.remove('active');
+            });
+            this.classList.add('active');
+        };
+    });
+
+    function scrollToShop() {
+        document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function card() {
+
+
+        $('#ex1').modal({
+            fadeDuration: 0,
+
+        });
+
+    }
+    function getCookie(cname) {
+        let name = cname + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+    function setCookie(cname, cvalue) {
+
+
+        document.cookie = cname + "=" + cvalue + ";";
+    }
+    function cardclose() {
+        $('.back').click();
+    }
+    function addtocart(item, id, cook) {
+        var product = $(item).clone();
+        product.removeAttr("style")
+        $(".pice").text("€ " + (parseFloat($(".pice").text().replace("€", "")) + parseFloat(product.children(".pricecart").text().replace("€", ""))))
+        product.removeAttr('onclick')
+        if (cook === false) {
+            $.notify("Товар успешно добавлен в корзину", "success");
+        }
+        product.appendTo(".products");
+        if (cook == false) {
+            if (getCookie("cart") == "") {
+                setCookie("cart", id)
+            } else {
+                setCookie("cart", getCookie("cart") + "," + id)
+            }
+        }
+    }
+    function buy() {
+
+        var login = $("input[name='name']").val()
+        var email = $("input[name='email']").val()
+
+        if (login == "" || email == "") {
+            $.notify("Ошибка! Заполните все поля!", "error");
+            return
+        }
+        $('.back').click();
+        $("#success").modal("show")
+    }
+    $(document).ready(function () {
+        cart = getCookie("cart")
+        if (cart !== "") {
+            cart.split(",").forEach((element) => addtocart($(".card[data-id=" + element + "]").first(), element, true))
+        }
+    });
+</script>
+{%endblock content%}

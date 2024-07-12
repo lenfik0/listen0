@@ -1,0 +1,22 @@
+{%extends 'base.html'%}
+{%block title%}login{%endblock title%}
+{%block content%}
+<div class="login">
+    <h1 class="login_title">Логин</h1>
+    <p class="login_text">Заполните форму для входа в аккаунт.</p>
+    <div class="login_form">
+        <form method="POST">
+            {%csrf_token%}
+            {{form.as_p}}
+            <p><a class="pass_res" href="{%url 'password_reset'%}"> Забыли пароль?</a></p>
+            <p><input class="login_submit" type="submit" value="Войти"></p>
+        </form>
+        {%if form.errors%}
+        <p class="form_error">Ошибка данных!</p>
+        {%endif%}
+
+    </div>
+
+</div>
+
+{%endblock content%}
